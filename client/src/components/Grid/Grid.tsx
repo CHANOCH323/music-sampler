@@ -8,7 +8,7 @@ interface GridProps {
 
 export const Grid: React.FC<GridProps> = ({ currentStep, onPlayStep }) => {
   const steps = 8;
-  const instruments = ['Kick', 'Snare', 'HiHat'];
+  const instruments = ['Kick', 'Snare', 'HiHat', 'Tom', 'Crash', 'Clap'];
 
   // grid[rowIndex][stepIndex] = true/false
   const [grid, setGrid] = useState<boolean[][]>(
@@ -37,6 +37,11 @@ export const Grid: React.FC<GridProps> = ({ currentStep, onPlayStep }) => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-xl shadow-xl w-full max-w-4xl">
+      {/* כותרת מעל הגריד */}
+      <h2 className="text-3xl font-bold text-center text-white mb-6">
+        Music Sampler
+      </h2>
+
       {grid.map((row, rowIndex) => (
         <BeatRow
           key={rowIndex}
