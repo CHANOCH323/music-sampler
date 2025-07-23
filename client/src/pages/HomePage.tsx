@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Grid } from '../components/Grid/Grid';
 import { TransportControls } from '../components/Transport/TransportControls';
 import { loadSounds, playSound } from '../services/soundService';
+import '../index.css';
+
 
 export const HomePage: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
