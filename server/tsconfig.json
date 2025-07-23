@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                      /* גירסת JS ליצוא */
+    "module": "commonjs",                    /* שיטת מודולים */
+    "rootDir": "./src",                      /* תיקיית מקור הקוד */
+    "outDir": "./dist",                      /* תיקיית היעד לקבצי JS אחרי הקומפילציה */
+    "esModuleInterop": true,                 /* תמיכה בייבוא מודולים בסגנון CommonJS ו-ESM */
+    "forceConsistentCasingInFileNames": true, /* תאימות אותיות רישיות בשמות קבצים */
+    "strict": true,                          /* הפעלת בדיקות TypeScript מחמירות */
+    "skipLibCheck": true                     /* דילוג על בדיקת טיפוסים בקבצי d.ts */
+  }
+}
