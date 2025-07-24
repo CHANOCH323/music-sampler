@@ -1,11 +1,22 @@
-const samplesData = [
-  { id: "1", label: "Sample 1", category: "A", url: "http://example.com/1" },
-  { id: "2", label: "Sample 2", category: "B", url: "http://example.com/2" },
-];
+import { getInstrumentsWithBeats } from '../db/beatsRepository';
 
 const getAllSamples = async () => {
-  // כאן תוכל להוסיף לוגיקה אמיתית, DB, וכו'
-  return samplesData;
+  const instrumentsWithBeats = await getInstrumentsWithBeats();
+
+  // נוודא שקיבלנו נתונים לפני שמנסים למפות
+  if (!instrumentsWithBeats) return [];
+
+  // כל כלי (instrument) הוא בעצם tool_type עם רשימת beat_files
+  const samples = instrumentsWithBeats.flatMap(toolType =>
+    (toolType.beat_files ?? []).map(beatFile => ({
+      id: beatFile.id,
+      label: beatFile.name,
+      category: toolType.name, // שם סוג הכלי
+      url: beatFile.file_url,
+    }))
+  );
+
+  return samples;
 };
 
 export default {
