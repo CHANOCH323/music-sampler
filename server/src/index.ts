@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: 'http://localhost:5173',  // הכתובת המדויקת של ה-client שלך
+  origin: 'https://music-sampler.onrender.com/',
   credentials: true,                // מאפשר cookies ו-auth headers
 }));
 
