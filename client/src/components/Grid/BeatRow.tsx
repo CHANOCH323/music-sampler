@@ -10,9 +10,14 @@ interface BeatRowProps {
 
 export const BeatRow: React.FC<BeatRowProps> = ({ instrumentName, cells, currentStep, onToggleCell }) => {
   return (
-    <div className="flex items-center gap-4 mb-4">
-      <span className="w-24 text-lg font-semibold">{instrumentName}</span>
-      <div className="flex gap-2">
+    // Changed to items-start for better alignment if instrumentName wraps
+    <div className="flex items-start gap-2 md:gap-4 mb-2 md:mb-4">
+      {/* Reduced width and font size for instrument name on mobile */}
+      <span className="w-20 md:w-24 text-base md:text-lg font-semibold flex-shrink-0">
+        {instrumentName}
+      </span>
+      {/* Ensures the cells stay in a single row and allow for scrolling */}
+      <div className="flex gap-1 md:gap-2 flex-nowrap">
         {cells.map((isActive, index) => (
           <BeatCell
             key={index}
