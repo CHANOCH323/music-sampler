@@ -40,8 +40,8 @@ export const Grid: React.FC<GridProps> = ({ currentStep, onPlayStep }) => {
   };
 
   return (
-    <div className="p-6 bg-gray-800 rounded-xl shadow-xl w-full max-w-4xl">
-      <h2 className="text-3xl font-bold text-center text-white mb-6">
+    <div className="p-4 md:p-6 bg-gray-800 rounded-xl shadow-xl w-full max-w-4xl overflow-x-auto"> {/* Added overflow-x-auto */}
+      <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-4 md:mb-6">
         Music Sampler
       </h2>
       {grid.map((row, rowIndex) => (
@@ -56,4 +56,3 @@ export const Grid: React.FC<GridProps> = ({ currentStep, onPlayStep }) => {
     </div>
   );
 };
-

@@ -22,7 +22,6 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (isPlaying) {
-
       const interval = 60000 / bpm / 2;
       intervalRef.current = window.setInterval(() => {
         setCurrentStep((prev) => (prev + 1) % steps);
@@ -38,7 +37,7 @@ export const HomePage: React.FC = () => {
   }, [isPlaying, bpm]);
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-900 text-white p-4">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-900 text-white p-2 md:p-4"> {/* Adjusted padding */}
       <Grid currentStep={currentStep} onPlayStep={playSound} />
       <TransportControls
         isPlaying={isPlaying}

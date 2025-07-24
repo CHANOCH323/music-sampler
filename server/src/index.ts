@@ -7,8 +7,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-  origin: 'https://music-sampler-x6me.vercel.app',
-  credentials: true,                // מאפשר cookies ו-auth headers
+
+  origin: ['https://music-sampler-x6me.vercel.app/',
+              'http://localhost:5173'], // הכתובת המדויקת של ה-client שלך
+  credentials: true,                
+
 }));
 
 app.use(express.json());
