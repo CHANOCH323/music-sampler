@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Grid } from '../components/Grid/Grid';
 import { TransportControls } from '../components/Transport/TransportControls';
 import { loadSounds, playSound } from '../services/soundService';
+import { useSamples } from '../contexts/SamplesContext';
 
 export const HomePage: React.FC = () => {
+  const { selectedTool } = useSamples();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [bpm, setBpm] = useState(120); // ברירת מחדל ל-BPM
@@ -11,15 +13,16 @@ export const HomePage: React.FC = () => {
   const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
-    loadSounds(); // נטען את הסאונדים בעת טעינת העמוד
-  }, []);
+    if (selectedTool) {
+      loadSounds(selectedTool);
+    }
+  }, [selectedTool]);
 
   const togglePlay = () => setIsPlaying(!isPlaying);
 
   useEffect(() => {
     if (isPlaying) {
-      // מחשב את משך הזמן בין צעדים לפי BPM (BPM = פעימות לדקה)
-      // משך צעד במילישניות = 60000 (ms בדקה) / BPM / 2 (כי 8 צעדים הם 2 פעימות)
+
       const interval = 60000 / bpm / 2;
       intervalRef.current = window.setInterval(() => {
         setCurrentStep((prev) => (prev + 1) % steps);
