@@ -1,5 +1,5 @@
 import { supabase } from '../db/supabaseClient';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { UserFromDB, SignupUser } from '../types/user.d';
 
 export async function findByEmailOrUsername(emailOrUsername: string): Promise<UserFromDB | null> {
