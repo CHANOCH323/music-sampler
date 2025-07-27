@@ -3,6 +3,6 @@ import samplesController from "../controllers/samplesController";
 
 const router = Router();
 
-router.get("/samples", samplesController.getSamples);
+router.get("/getAllSamples", samplesController.getSamples);
 
 export default router;
