@@ -3,5 +3,5 @@ import { fetchRequest } from '../apiClient';
 
 export const getAllSamples = () => {
     console.log('Fetching all samples');
-  return fetchRequest('api/samples', 'GET');
+  return fetchRequest('api/samples/getAllSamples', 'GET');
 };
