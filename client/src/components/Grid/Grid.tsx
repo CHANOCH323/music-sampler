@@ -1,53 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BeatRow } from './BeatRow';
 import { useSamples } from '../../contexts/SamplesContext';
 
 interface GridProps {
   currentStep: number;
   onPlayStep?: (instrument: string) => void;
+
+  externalGrid: boolean[][];
+  setExternalGrid: React.Dispatch<React.SetStateAction<boolean[][]>>;
 }
 
-export const Grid: React.FC<GridProps> = ({ currentStep, onPlayStep }) => {
+export const Grid: React.FC<GridProps> = ({
+  currentStep,
+  onPlayStep,
+  externalGrid,
+  setExternalGrid,
+}) => {
   const { selectedTool } = useSamples();
   const steps = 8;
 
   const instruments = selectedTool?.beat_files.map((beat) => beat.name) ?? [];
 
-  const [grid, setGrid] = useState<boolean[][]>([]);
+  // אין צורך להשתמש ב-state פנימי grid, כי עכשיו זה externalGrid שנשלח מבחוץ
 
-  useEffect(() => {
+  // כדי לאתחל את ה-grid כאשר משתנה ה-selectedTool
+  React.useEffect(() => {
     if (instruments.length) {
-      setGrid(instruments.map(() => Array(steps).fill(false)));
+      setExternalGrid(instruments.map(() => Array(steps).fill(false)));
     } else {
-      setGrid([]);
+      setExternalGrid([]);
     }
-  }, [selectedTool, instruments.length]);
+  }, [selectedTool, instruments.length, setExternalGrid]);
 
-  // useEffect זה מפעיל צלילים כאשר ה-currentStep מתקדם (קצב אוטומטי של הסקוונסר).
-  useEffect(() => {
+  React.useEffect(() => {
     if (onPlayStep) {
       instruments.forEach((instrument, rowIndex) => {
-        if (grid[rowIndex] && grid[rowIndex][currentStep]) {
-          onPlayStep(instrument); // מפעיל את הצליל אם התא פעיל בשלב הנוכחי
+        if (externalGrid[rowIndex] && externalGrid[rowIndex][currentStep]) {
+          onPlayStep(instrument);
         }
       });
     }
-  }, [currentStep, grid, instruments, onPlayStep]);
+  }, [currentStep, externalGrid, instruments, onPlayStep]);
 
-  // פונקציה זו אחראית אך ורק על שינוי מצב התא (פעיל/לא פעיל) ברשת.
-  // היא לא מפעילה צלילים בעצמה.
   const toggleCell = (rowIndex: number, cellIndex: number) => {
-    setGrid((prevGrid) => {
+    setExternalGrid((prevGrid) => {
       const newGrid = prevGrid.map((row) => [...row]);
       newGrid[rowIndex][cellIndex] = !newGrid[rowIndex][cellIndex];
       return newGrid;
     });
   };
 
-  // פונקציה זו מופעלת כאשר לוחצים על תא בודד, והיא אחראית על הפעלת הצליל של אותו כלי ספציפי.
   const handlePlayInstrumentBeat = (instrumentName: string) => {
     if (onPlayStep) {
-      onPlayStep(instrumentName); // מפעיל *רק* את הכלי הספציפי שנלחץ
+      onPlayStep(instrumentName);
     }
   };
 
@@ -57,14 +62,14 @@ export const Grid: React.FC<GridProps> = ({ currentStep, onPlayStep }) => {
         Music Sampler
       </h2>
       <div className="overflow-x-auto custom-scrollbar pb-4">
-        {grid.map((row, rowIndex) => (
+        {externalGrid.map((row, rowIndex) => (
           <BeatRow
             key={rowIndex}
             instrumentName={instruments[rowIndex]}
             cells={row}
             currentStep={currentStep}
             onToggleCell={(cellIndex) => toggleCell(rowIndex, cellIndex)}
-            onPlayInstrumentBeat={handlePlayInstrumentBeat} // העברת ה-handler לטיפול בלחיצה
+            onPlayInstrumentBeat={handlePlayInstrumentBeat}
           />
         ))}
       </div>
