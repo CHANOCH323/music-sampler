@@ -5,6 +5,7 @@ import { UserStatus } from "../components/users/UserStatus";
 import { loadSounds, playSound } from "../services/soundService";
 import { useSamples } from "../contexts/SamplesContext";
 import { useAuth } from "../contexts/AuthContext";
+import { getUserBeats, saveUserBeat } from "../api/requests/samplesApi";
 
 interface Beat {
   id: string;
@@ -14,7 +15,7 @@ interface Beat {
 
 export const HomePage: React.FC = () => {
   const { selectedTool } = useSamples();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, username  } = useAuth(); // נניח ש־user מכיל את מזהה המשתמש
 
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -28,7 +29,6 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     if (selectedTool) {
       loadSounds(selectedTool);
-      // אפס את הגריד כשהכלי משתנה
       const instruments = selectedTool.beat_files.map((b: any) => b.name);
       setGrid(instruments.map(() => Array(steps).fill(false)));
     }
@@ -56,23 +56,18 @@ export const HomePage: React.FC = () => {
   }, [isPlaying, bpm, steps]);
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && username ) {
       fetchSavedBeats();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, username ]);
 
   const togglePlay = () => setIsPlaying((prev) => !prev);
 
   const saveBeat = async () => {
     try {
-      const response = await fetch("/api/beats", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ grid }),
-      });
-      if (!response.ok) throw new Error("Failed to save beat");
+      await saveUserBeat({ grid, name: "My Beat Name" }); // אפשר להוסיף שם לפי הצורך
       alert("Beat saved!");
-      fetchSavedBeats(); // טען שוב לאחר שמירה
+      fetchSavedBeats(); // טען שוב אחרי שמירה
     } catch (err) {
       console.error(err);
       alert("Error saving beat");
@@ -81,9 +76,8 @@ export const HomePage: React.FC = () => {
 
   const fetchSavedBeats = async () => {
     try {
-      const response = await fetch("/api/beats");
-      if (!response.ok) throw new Error("Failed to fetch beats");
-      const data = await response.json();
+      if (!username ) return;
+      const data = await getUserBeats(username );
       setSavedBeats(data);
     } catch (err) {
       console.error(err);

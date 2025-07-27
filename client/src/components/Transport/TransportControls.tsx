@@ -2,6 +2,8 @@ import React from "react";
 import { PlayButton } from "./PlayButton";
 import { BpmControl } from "./BpmControl";
 import { ToolSelector } from "./ToolSelector";
+import { SaveBeatButton } from "./SaveBeatButton";
+import { UserBeatsList } from "./UserBeatsList";
 
 interface Beat {
   id: string;
@@ -41,30 +43,19 @@ export const TransportControls: React.FC<TransportControlsProps> = ({
         <PlayButton isPlaying={isPlaying} onToggle={onTogglePlay} />
 
         {isLoggedIn && (
-          <>
-            <button
-              onClick={onSaveBeat}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-              aria-label="Save current beat"
-            >
-              Save Beat
-            </button>
+          <div className="flex flex-col gap-2 items-center">
+            <SaveBeatButton onClick={onSaveBeat} />
 
             {savedBeats.length > 0 && (
               <div className="flex flex-col max-h-40 overflow-y-auto bg-gray-700 rounded-md p-2 w-48">
                 <span className="text-white mb-2 font-semibold">Saved Beats:</span>
-                {savedBeats.map((beat) => (
-                  <button
-                    key={beat.id}
-                    onClick={() => onSelectBeat(beat.id)}
-                    className="text-white text-left hover:bg-blue-500 rounded px-2 py-1"
-                  >
-                    {beat.name}
-                  </button>
-                ))}
+                <UserBeatsList
+                  beats={savedBeats.map((beat) => beat.id)}
+                  onSelect={onSelectBeat}
+                />
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>
