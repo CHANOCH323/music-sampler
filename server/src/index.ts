@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors({
 
-  origin: ['https://music-sampler-x6me.vercel.app/',
+  origin: ['https://music-sampler-x6me.vercel.app',
               'http://localhost:5173',
             "https://music-sampler-x6me-166lm6cav-chanoch323s-projects.vercel.app"], // הכתובת המדויקת של ה-client שלך
   credentials: true,                
