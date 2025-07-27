@@ -1,4 +1,4 @@
-import { loginService,signupService } from '../services/usersService';
+import { loginService,signupService ,authStatusService} from '../services/usersService';
 import { LoginUser,SignupUser } from '../types/user.d';
 import { Request, Response, NextFunction } from 'express';
 
@@ -14,12 +14,12 @@ export async function loginController( req: Request, res: Response, next: NextFu
         
         // Set JWT token in HTTP-only cookie
         res.cookie('token', token, {
-            httpOnly: process.env.NODE_ENV === 'production',
+            httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 24 * 60 * 60 * 1000,
-            // domain: process.env.DOMAIN
         });
+
         
         console.log('----------END login controller----------');
         res.json(user)
@@ -40,11 +40,10 @@ export async function signupController(req: Request, res: Response, next: any) {
         
         // Set JWT token in HTTP-only cookie
         res.cookie('token', token, {
-            httpOnly: process.env.NODE_ENV === 'production',
+            httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 24 * 60 * 60 * 1000,
-            // domain: process.env.DOMAIN
         });
 
         console.log('----------END signup controller----------');
@@ -56,4 +55,28 @@ export async function signupController(req: Request, res: Response, next: any) {
         next(error)
         return;
     }
+}
+export async function authStatusController(req: Request, res: Response, next: NextFunction) {
+  console.log("----------auth status controller----------");
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      res.json({ isAuthenticated: false, username: null, userId: null });
+      return;
+    }
+
+    const user = await authStatusService(token);
+
+    if (!user) {
+      res.json({ isAuthenticated: false, username: null, userId: null });
+      return;
+    }
+
+    res.json({ isAuthenticated: true, username: user.username , userId: user.userId });
+    return;
+  } catch (error: any) {
+    console.error('Auth status error:', error);
+    next(error);
+    return;
+  }
 }

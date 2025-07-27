@@ -5,7 +5,6 @@ import { useSamples } from '../../contexts/SamplesContext';
 interface GridProps {
   currentStep: number;
   onPlayStep?: (instrument: string) => void;
-
   externalGrid: boolean[][];
   setExternalGrid: React.Dispatch<React.SetStateAction<boolean[][]>>;
 }
@@ -19,11 +18,14 @@ export const Grid: React.FC<GridProps> = ({
   const { selectedTool } = useSamples();
   const steps = 8;
 
-  const instruments = selectedTool?.beat_files.map((beat) => beat.name) ?? [];
+  // מיון הסאונדים לפי סדר אלפביתי
+  const instruments = React.useMemo(() => {
+    return selectedTool?.beat_files
+      ?.map((beat) => beat.name)
+      .sort((a, b) => a.localeCompare(b)) ?? [];
+  }, [selectedTool]);
 
-  // אין צורך להשתמש ב-state פנימי grid, כי עכשיו זה externalGrid שנשלח מבחוץ
-
-  // כדי לאתחל את ה-grid כאשר משתנה ה-selectedTool
+  // טעינה מחדש של הגריד כאשר משתנה הכלי
   React.useEffect(() => {
     if (instruments.length) {
       setExternalGrid(instruments.map(() => Array(steps).fill(false)));
@@ -32,6 +34,7 @@ export const Grid: React.FC<GridProps> = ({
     }
   }, [selectedTool, instruments.length, setExternalGrid]);
 
+  // הפעלת הסאונד בשלב הנוכחי
   React.useEffect(() => {
     if (onPlayStep) {
       instruments.forEach((instrument, rowIndex) => {
@@ -42,6 +45,7 @@ export const Grid: React.FC<GridProps> = ({
     }
   }, [currentStep, externalGrid, instruments, onPlayStep]);
 
+  // החלפת מצב תא
   const toggleCell = (rowIndex: number, cellIndex: number) => {
     setExternalGrid((prevGrid) => {
       const newGrid = prevGrid.map((row) => [...row]);
@@ -50,11 +54,22 @@ export const Grid: React.FC<GridProps> = ({
     });
   };
 
+  // הפעלת צליל בלחיצה
   const handlePlayInstrumentBeat = (instrumentName: string) => {
     if (onPlayStep) {
       onPlayStep(instrumentName);
     }
   };
+
+  // אם הסאונדים לא נטענו עדיין – נציג אנימציית טעינה
+  if (!instruments.length) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-white">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-teal-400 mb-4"></div>
+        <p className="text-lg font-semibold">טוען סאונדים...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-6 bg-gray-800 rounded-xl shadow-xl w-full max-w-4xl mx-auto overflow-hidden">

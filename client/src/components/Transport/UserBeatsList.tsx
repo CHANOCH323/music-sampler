@@ -1,22 +1,29 @@
 import React from "react";
 
 interface UserBeatsListProps {
-  beats: string[];
+  beats: { id: string; name: string }[];
   onSelect: (beatId: string) => void;
 }
 
 export const UserBeatsList: React.FC<UserBeatsListProps> = ({ beats, onSelect }) => {
   return (
-    <div className="flex flex-wrap gap-2">
-      {beats.map((beatId) => (
-        <button
-          key={beatId}
-          onClick={() => onSelect(beatId)}
-          className="bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl px-3 py-1 text-xs"
+    <ul className="max-h-48 overflow-auto bg-gray-700 rounded-md p-2 space-y-1 w-full max-w-md mx-auto">
+      {beats.map((beat) => (
+        <li
+          key={beat.id}
+          onClick={() => onSelect(beat.id)}
+          className="cursor-pointer px-3 py-1 rounded hover:bg-gray-600 text-white"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onSelect(beat.id);
+            }
+          }}
         >
-          {beatId}
-        </button>
+          {beat.name}
+        </li>
       ))}
-    </div>
+    </ul>
   );
 };

@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { findByEmailOrUsername ,checkIfFieldValueExists,createUserInDB} from '../db/usersRepository';
 import { generateToken, verifyToken } from '../utils/jwt';
 import { ValidationError ,NotFoundError, UnauthorizedError ,DBError, BadRequestError} from '../errors/CustomErrors';
-import { UserFromDB ,LoginUser,SignupUser} from '../types/user.d';
+import { UserFromDB ,LoginUser,SignupUser,AuthStatusResponse} from '../types/user.d';
 
 
 export async function loginService(userData: LoginUser):
@@ -27,7 +27,7 @@ export async function loginService(userData: LoginUser):
     delete user.password;
     
     // Handle token
-    const token = generateToken(user.id, user.email);
+    const token = generateToken(user.id, user.username);
     if (!token) {
         throw new ValidationError('Token is required but missing');
     }
@@ -63,7 +63,7 @@ export async function signupService(userData: SignupUser):
       throw new DBError('Failed to create user in the database');
     }
 
-    const token = generateToken(newUserFromDB.id, newUserFromDB.email);
+    const token = generateToken(newUserFromDB.id, newUserFromDB.username);
     if (!token) {
       throw new ValidationError('Token is required but missing');
     }
@@ -82,3 +82,25 @@ export async function signupService(userData: SignupUser):
     throw new DBError('An unexpected error occurred');
   }
 };
+export async function authStatusService(token?: string): Promise<AuthStatusResponse> {
+  if (!token) {
+    return { isAuthenticated: false, username: null, userId: null };
+  }
+
+  try {
+    const decoded = verifyToken(token);
+    if (!decoded || !decoded.userId || !decoded.username ) {
+      return { isAuthenticated: false, username: null, userId: null };
+
+    }
+
+    return {
+      isAuthenticated: true,
+      username: decoded.username,
+      userId: decoded.userId
+    };
+  } catch (error) {
+    console.error('authStatusService error:', error);
+    return { isAuthenticated: false, username: null , userId: null };
+  }
+}

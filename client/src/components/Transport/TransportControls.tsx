@@ -18,7 +18,7 @@ interface TransportControlsProps {
   onChangeBpm: (value: number) => void;
 
   isLoggedIn: boolean;
-  onSaveBeat: () => void;
+  onSaveBeat: (beatName: string) => void;
   savedBeats: Beat[];
   onSelectBeat: (beatId: string) => void;
 }
@@ -44,15 +44,15 @@ export const TransportControls: React.FC<TransportControlsProps> = ({
 
         {isLoggedIn && (
           <div className="flex flex-col gap-2 items-center">
-            <SaveBeatButton onClick={onSaveBeat} />
+            <SaveBeatButton onSave={onSaveBeat} />
 
             {savedBeats.length > 0 && (
               <div className="flex flex-col max-h-40 overflow-y-auto bg-gray-700 rounded-md p-2 w-48">
                 <span className="text-white mb-2 font-semibold">Saved Beats:</span>
                 <UserBeatsList
-                  beats={savedBeats.map((beat) => beat.id)}
-                  onSelect={onSelectBeat}
-                />
+              beats={savedBeats.map((beat) => ({ id: beat.id, name: beat.name }))}
+              onSelect={onSelectBeat}
+              />
               </div>
             )}
           </div>

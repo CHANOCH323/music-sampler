@@ -4,8 +4,9 @@ import type { LoginUser, SignupUser } from '../../types/user.d';
 // ממשק (interface) עבור התשובה הצפויה מנקודת קצה של בדיקת סטטוס אימות
 interface AuthStatusResponse {
   isAuthenticated: boolean;
+  userId: string | null; 
   username: string | null;
-  // תוכל להוסיף כאן שדות נוספים אם השרת שלך מחזיר אותם (למשל, userId, avatarUrl)
+  
 }
 
 export const registerUser = async (userData: SignupUser) => {

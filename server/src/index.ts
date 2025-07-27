@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from 'cookie-parser';
 import samplesRoutes from "./routes/samplesRoutes";
 import cors from "cors";
 import {  usersRoutes } from './routes/usersRouts';
@@ -9,6 +10,7 @@ const allowedOrigins = ['https://music-sampler-x6me.vercel.app',
 
 const path = require('path');
 const app = express();
+app.use(cookieParser());
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({

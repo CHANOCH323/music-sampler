@@ -4,6 +4,15 @@ export interface LoginUser {
   emailOrUsername: string;
   password: string;
 }
+export interface AuthStatusResponse {
+  isAuthenticated: boolean;
+  userId: string | null;
+  username: string | null;
+}
+export interface DecodedToken {
+  userId: string;
+  username: string;
+}
 
 export interface SignupUser {
   fullName: string;
@@ -22,7 +31,6 @@ export interface NewUserForDB extends SignupUser {
 export interface UserFromDB {
   id: string;
   fullName: string;
-  role: 'Admin' | 'Helper' | 'User';
   firstLogin: string;
   lastLogin: string;
   username: string;
