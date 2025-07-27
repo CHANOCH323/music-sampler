@@ -1,8 +1,11 @@
 import { Router } from "express";
-import samplesController from "../controllers/samplesController";
+import {getSamplesController,saveBeatController,getUserBeatsController} from "../controllers/samplesController";
 
 const router = Router();
 
-router.get("/getAllSamples", samplesController.getSamples);
+router.get("/getAllSamples", getSamplesController);
+router.get("/user/:userId",getUserBeatsController)
+router.post("/saveUserBeat",saveBeatController)
+
 
 export default router;

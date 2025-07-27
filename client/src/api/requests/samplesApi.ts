@@ -6,11 +6,11 @@ export const getAllSamples = () => {
   return fetchRequest('api/samples/getAllSamples', 'GET');
 };
 
-export const getUserBeats = (username: string) => {
-  console.log('Fetching samples for user:', username);
-  return fetchRequest(`api/samples/user/${username}`, 'GET');
+export const getUserBeats = (userId: string) => {
+  console.log('Fetching samples for user:', userId);
+  return fetchRequest(`api/samples/user/${userId}`, 'GET');
 };
-export const saveUserBeat = async (beatData: { grid: boolean[][]; name?: string }) => {
+export const saveUserBeat = async (beatData: { grid: boolean[][]; name?: string ;toolTypeId: number;}) => {
   console.log('Saving user beat', beatData);
-  return fetchRequest('api/beats', 'POST', beatData);
+  return fetchRequest('api/samples/saveUserBeat', 'POST', beatData);
 };

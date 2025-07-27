@@ -1,19 +1,18 @@
 // contexts/AuthContext.tsx
-import React, {createContext, useContext, useState, useEffect,
-} from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from "react";
-import { checkAuthStatus } from '../api/requests/userApi'; 
+import { checkAuthStatus } from '../api/requests/userApi';
 
 interface AuthContextType {
   isLoggedIn: boolean;
   username: string | null;
-  isLoadingAuth: boolean; 
-  
-  login: (username: string) => void;
+  userId: string | null;          
+  isLoadingAuth: boolean;
+
+  login: (user: { username: string; userId: string }) => void;  // עדכון הפרמטר ל-login
   logout: () => void;
 }
 
-// יצירת הקונטקסט
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
@@ -23,43 +22,43 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [username, setUsername] = useState<string | null>(null);
-  const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true); 
+  const [userId, setUserId] = useState<string | null>(null);  // מצב לשמירת userId
+  const [isLoadingAuth, setIsLoadingAuth] = useState<boolean>(true);
 
   useEffect(() => {
     const checkStatus = async () => {
       setIsLoadingAuth(true);
-      const { isAuthenticated, username: fetchedUsername } =
-        await checkAuthStatus();
+      const { isAuthenticated, username: fetchedUsername, userId: fetchedUserId } = await checkAuthStatus();
       setIsLoggedIn(isAuthenticated);
       setUsername(fetchedUsername);
+      setUserId(fetchedUserId || null);
       setIsLoadingAuth(false);
     };
     checkStatus();
   }, []);
 
-  const login = (user: string) => {
+  const login = (user: { username: string; userId: string }) => {
     setIsLoggedIn(true);
-    setUsername(user);
-    
+    setUsername(user.username);
+    setUserId(user.userId);
   };
 
   const logout = () => {
     setIsLoggedIn(false);
     setUsername(null);
-    
+    setUserId(null);
   };
 
   const contextValue: AuthContextType = {
     isLoggedIn,
     username,
+    userId,
     isLoadingAuth,
     login,
     logout,
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
